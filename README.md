@@ -1,200 +1,208 @@
-This docker-compose.yml file is provided by Mage Inferno
+<h1 align="center">markoshust/docker-magento</h1> 
 
-Author: Mark Shust <mark.shust@mageinferno.com>
+<div align="center">
+  <p>Mark Shust's Docker Configuration for Magento</p>
+  <img src="https://img.shields.io/badge/magento-2.X-brightgreen.svg?logo=magento&longCache=true&style=flat-square" alt="Supported Magento Versions" />
+  <a href="https://hub.docker.com/r/markoshust/magento-nginx/" target="_blank"><img src="https://img.shields.io/docker/pulls/markoshust/magento-nginx.svg?label=nginx%20docker%20pulls" alt="Docker Hub Pulls - Nginx" /></a>
+  <a href="https://hub.docker.com/r/markoshust/magento-php/" target="_blank"><img src="https://img.shields.io/docker/pulls/markoshust/magento-php.svg?label=php%20docker%20pulls" alt="Docker Hub Pulls - PHP" /></a>
+  <a href="https://GitHub.com/Naereen/StrapDown.js/graphs/commit-activity" target="_blank"><img src="https://img.shields.io/badge/maintained%3F-yes-brightgreen.svg?style=flat-square" alt="Maintained - Yes" /></a>
+  <a href="https://opensource.org/licenses/MIT" target="_blank"><img src="https://img.shields.io/badge/license-MIT-blue.svg" /></a>
+</div>
+
+## Table of contents
+
+- [Docker Hub](#docker-hub)
+- [Usage](#usage)
+- [Prerequisites](#prerequisites)
+- [Quick Setup](#quick-setup)
+- [Custom CLI Commands](#custom-cli-commands)
+- [Misc Info](#misc-info)
+- [License](#license)
 
 ## Docker Hub
 
-View our Docker Hub images at [https://hub.docker.com/u/mageinferno/](https://hub.docker.com/u/mageinferno/)
+View Dockerfiles:
+
+- [markoshust/magento-nginx (Docker Hub)](https://hub.docker.com/r/markoshust/magento-nginx/)
+  - 1.13
+      - [`latest`, `1.13`, `1.13-7`](https://github.com/markoshust/docker-magento/tree/master/images/nginx/1.13)
+      - [`1.13-6`](https://github.com/markoshust/docker-magento/tree/20.1.1/images/nginx/1.13)
+      - [`1.13-5`](https://github.com/markoshust/docker-magento/tree/18.1.1/images/nginx/1.13)
+      - [`1.13-4`](https://github.com/markoshust/docker-magento/tree/18.0.1/images/nginx/1.13)
+      - [`1.13-3`](https://github.com/markoshust/docker-magento/tree/15.0.1/images/nginx/1.13)
+      - [`1.13-2`](https://github.com/markoshust/docker-magento/tree/12.0.0/images/nginx/1.13)
+      - [`1.13-1`](https://github.com/markoshust/docker-magento/tree/11.1.5/images/nginx/1.13)
+      - [`1.13-0`](https://github.com/markoshust/docker-magento/tree/11.0.0/images/nginx/1.13)
+- [markoshust/magento-php (Docker Hub)](https://hub.docker.com/r/markoshust/magento-php/)
+  - 7.2
+      - [`latest`, `7.2-fpm`, `7.2-fpm-0`](https://github.com/markoshust/docker-magento/tree/master/images/php/7.2)
+  - 7.1
+      - [`7.1-fpm`, `7.1-fpm-9`](https://github.com/markoshust/docker-magento/tree/master/images/php/7.1)
+      - [`7.1-fpm-8`](https://github.com/markoshust/docker-magento/tree/17.0.1/images/php/7.1)
+      - [`7.1-fpm-7`](https://github.com/markoshust/docker-magento/tree/16.2.0/images/php/7.1)
+      - [`7.1-fpm-6`](https://github.com/markoshust/docker-magento/tree/16.0.0/images/php/7.1)
+      - [`7.1-fpm-5`](https://github.com/markoshust/docker-magento/tree/15.0.1/images/php/7.1)
+      - [`7.1-fpm-4`](https://github.com/markoshust/docker-magento/tree/15.0.0/images/php/7.1)
+      - [`7.1-fpm-3`](https://github.com/markoshust/docker-magento/tree/14.0.1/images/php/7.1)
+      - [`7.1-fpm-2`](https://github.com/markoshust/docker-magento/tree/13.0.0/images/php/7.1)
+      - [`7.1-fpm-1`](https://github.com/markoshust/docker-magento/tree/11.1.5/images/php/7.1)
+      - [`7.1-fpm-0`](https://github.com/markoshust/docker-magento/tree/11.0.0/images/php/7.1)
 
 ## Usage
 
-This file is provided as an example development environment using Mage Inferno Magento 2 Docker Images.
+This configuration is intended to be used as a Docker-based development environment for Magento 2.
 
-## docker-compose.yml
+Folders:
 
-```
-# Mage Inferno Docker Compose (https://github.com/mageinferno/magento2-docker-compose)
-# Version 3.0.0
+- `images`: Docker images for nginx and php
+- `compose`: sample setups with Docker Compose
 
-app:
-  image: mageinferno/magento2-nginx:1.9.9-2
-  ports:
-    - "80:80"
-  links:
-    - php-fpm
-    - db
-  volumes_from:
-    - appdata
-  environment:
-    - APP_MAGE_MODE=default
-    - VIRTUAL_HOST=mysite.com
+> The Magento 1 version of this development environment has been deprecated and is no longer supported. PHP 5 was used as it's base, and that version has reached end-of-life. If you still wish to use this setup, please reference [compose/magento-1 on tag 20.1.1](https://github.com/markoshust/docker-magento/tree/20.1.1/compose/magento-1), but please be aware these images are no longer maintained.
 
-appdata:
-  image: tianon/true
-  volumes:
-    - /src
-    - ~/.composer:/root/.composer
+## Prerequisites
 
-"php-fpm":
-  image: mageinferno/magento2-php:7.0.2-fpm-1
-  links:
-    - db
-  volumes_from:
-    - appdata
-  environment:
-    - APP_MAGE_MODE=default
-    - PHP_MEMORY_LIMIT=2048M
+This setup assumes you are running Docker on a computer with at least 4GB of allocated RAM, a dual-core, and an SSD hard drive. [Download & Install Docker Community Edition](https://www.docker.com/community-edition#/download).
 
-db:
-  image: mariadb:10.1.10
-  ports:
-    - "3306:3306"
-  volumes_from:
-    - dbdata
-  environment:
-    - MYSQL_ROOT_PASSWORD=magento2
-    - MYSQL_DATABASE=magento2
-    - MYSQL_USER=magento2
-    - MYSQL_PASSWORD=magento2
+This configuration has been tested on Mac & Linux.
 
-dbdata:
-  image: tianon/true
-  volumes:
-    - /var/lib/mysql
+> **Windows Configurations**: The Windows configuration does not currently work and is in need of a contributor to get functional once again. Please see [issue 100](https://github.com/markoshust/docker-magento/issues/100) to contribute.
 
-setup:
-  image: mageinferno/magento2-php:7.0.2-fpm-1
-  command: /usr/local/bin/mage-setup
-  links:
-    - db
-  volumes_from:
-    - appdata
-  environment:
-    - M2SETUP_DB_HOST=db
-    - M2SETUP_DB_NAME=magento2
-    - M2SETUP_DB_USER=magento2
-    - M2SETUP_DB_PASSWORD=magento2
-    - M2SETUP_BASE_URL=http://mysite.com/
-    - M2SETUP_ADMIN_FIRSTNAME=Admin
-    - M2SETUP_ADMIN_LASTNAME=User
-    - M2SETUP_ADMIN_EMAIL=dummy@gmail.com
-    - M2SETUP_ADMIN_USER=magento2
-    - M2SETUP_ADMIN_PASSWORD=magento2
-    - M2SETUP_VERSION=2.0.0
-    - M2SETUP_USE_SAMPLE_DATA=true
-```
+## Quick Setup
 
-## Composer Setup
+### Automated Setup (New Project)
 
-This setup attaches the `~/.composer` directory from the host machine. For fully automated setup, please first setup a GitHub Personal Access Token for Composer (before running setup) by visiting <a href="https://github.com/settings/tokens/new?scopes=repo&description=Composer" target="_blank">https://github.com/settings/tokens/new?scopes=repo&description=Composer</a>.
+> macOS & Linux Only
 
-You'll also need to retrieve your Magento development keys. Please see <a href="http://devdocs.magento.com/guides/v2.0/install-gde/prereq/connect-auth.html" target="_blank">http://devdocs.magento.com/guides/v2.0/install-gde/prereq/connect-auth.html</a> for more details.
-
-After both sets of keys are retrieved, place your auth token on your host machine at `~/.composer/auth.json` with the following contents, like so:
+Run this automated one-liner from the directory you want to install your project to:
 
 ```
-{
-    "http-basic": {
-        "repo.magento.com": {
-            "username": "MAGENTO_PUBLIC_KEY",
-            "password": "MAGENTO_PRIVATE_KEY"
-        }
-    },
-    "github-oauth": {
-        "github.com": "GITHUB_ACCESS_TOKEN"
-    }
-}
+curl -s https://raw.githubusercontent.com/markoshust/docker-magento/master/lib/onelinesetup|bash -s -- magento2.test 2.3.0
 ```
 
-## Composer-less, No-Auth Setup
+The `magento2.test` above defines the hostname to use, and the `2.3.0` defines the Magento version to install. Note that since we need a write to `/etc/hosts` for DNS resolution, you will be prompted for your system password during setup.
 
-If you don't want to use Composer or setup the auth keys above, no worries. Magento provides a complete Magento 2 archive at <a href="http://devdocs.magento.com/guides/v2.0/install-gde/prereq/zip_install.html" target="_blank">http://devdocs.magento.com/guides/v2.0/install-gde/prereq/zip_install.html</a>. We decided to use this method for a very quick installation.
+After the one-liner above completes running, you should be able to access your site at `https://magento2.test`.
 
-Just set the `M2SETUP_USE_ARCHIVE` environment variable to `true` when running setup.
+### Manual Setup
 
-## Running Setup
-
-Before running Magento 2, you must download the source code, install composer dependencies, and execute the Magento installer script. Luckily, Mage Inferno makes this easy for you.
-
-The following environment variables can be set for setup:
-```
-- M2SETUP_DB_HOST=db
-- M2SETUP_DB_NAME=magento2
-- M2SETUP_DB_USER=magento2
-- M2SETUP_DB_PASSWORD=magento2
-- M2SETUP_BASE_URL=http://mysite.docker/
-- M2SETUP_ADMIN_FIRSTNAME=Admin
-- M2SETUP_ADMIN_LASTNAME=User
-- M2SETUP_ADMIN_EMAIL=dummy@gmail.com
-- M2SETUP_ADMIN_USER=magento2
-- M2SETUP_ADMIN_PASSWORD=magento2
-- M2SETUP_VERSION=2.0.0
-- M2SETUP_USE_SAMPLE_DATA=true
-- M2SETUP_USE_ARCHIVE=true
-```
-
-Our setup script uses these variables to determine how to setup your store. Everything is pretty self-explanatory. The `M2SETUP_USE_ARCHIVE` installs from archive, otherwise Composer is used for installation. `M2SETUP_VERSION` is required.
-
-To run setup, execute the following command from your project directory (`~/Sites/mysite`), which creates a one-off throw away container that sets up Magento 2 for you.
-`docker-compose run --rm setup`
-
-## Data Volumes
-
-This install will mount a `src` directory as a docker volume. Note that the persistancy comes from your host machine, so you may terminate running nginx/php containers and start them back up, and your data will remain. The `appdata` definition in the docker-compose.yml file is mainly there so we only have to define the relation in one place in the file, instead of it being defined multiple times.
-
-For MySQL, the `mysqldata` container runs from the `tianon/true` volume. This makes a persistent Docker volume, however be aware that removing this container will remove all of your MySQL data (aka your database). Even though it appears as exited/stopped when running `docker ps -a`, be sure not to remove this container, as your MySQL data will truly go away if you remove it.
-
-## Environment Variables
-
-You may pass in environment variables which will override the web server configurations at runtime. All variables are optional as appropriate defaults are set.
-
-Please see the appropriate images for available values:
-
-- <a href="https://github.com/mageinferno/docker-magento2-php#variables" target="_blank">mageinferno/php-fpm</a>
-- <a href="https://github.com/mageinferno/docker-magento2-nginx#variables" target="_blank">mageinferno/nginx</a>
-
-## OS X / Dinghy
-
-To use this image on other systems for local development, create a Dockerfile with anything specific to your local development platform.
-
-For example, if using [Dinghy](https://github.com/codekitchen/dinghy) on OS X, use:
+Same result as the one-liner above. Just replace `magento2.test` references with the hostname that you wish to use.
 
 ```
-FROM mageinferno/magento2-php:[TAG]
-RUN usermod -u 501 www-data
+# Quick setup for a new instance of Magento 2:
+curl -s https://raw.githubusercontent.com/markoshust/docker-magento/master/lib/template|bash -s -- magento-2
+
+# New projects can easily download by version:
+bin/download 2.3.0
+
+# or if you'd rather install with Composer, run:
+#
+# OPEN SOURCE:
+#
+# rm -rf src
+# composer create-project --repository=https://repo.magento.com/ --ignore-platform-reqs magento/project-community-edition=2.3.0 src
+#
+# COMMERCE:
+#
+# rm -rf src
+# composer create-project --repository=https://repo.magento.com/ --ignore-platform-reqs magento/project-enterprise-edition=2.3.0 src
+
+# Existing projects, instead of running the above replace the contents of /src with the source code of your existing Magento instance
+
+echo "127.0.0.1 magento2.test" | sudo tee -a /etc/hosts
+
+# For new setups:
+bin/setup magento2.test
+
+# For existing installations:
+# bin/start
+# bin/composer install
+
+open https://magento2.test
 ```
 
-Then build your custom image:
+> For more details on how everything works, see the extended [setup readme](https://github.com/markoshust/docker-magento/blob/master/SETUP.md).
 
-```
-docker build -t myname/php .
-```
+## Custom CLI Commands
 
-Remember to add your `VIRTUAL_HOST` environment variable to the web server container in your docker-compose.yml file, and remove `ports` as those are automatically exposed in Dinghy.
+- `bin/bash`: Drop into the bash prompt of your Docker container. The `phpfpm` container should be mainly used to access the filesystem within Docker.
+- `bin/dev-urn-catalog-generate`: Generate URN's for PHPStorm and remap paths to local host. Restart PHPStorm after running this command.
+- `bin/cli`: Run any CLI command without going into the bash prompt. Ex. `bin/cli ls`
+- `bin/clinotty`: Run any CLI command with no TTY. Ex. `bin/clinotty chmod u+x bin/magento`
+- `bin/composer`: Run the composer binary. Ex. `bin/composer install`
+- `bin/copyfromcontainer`: Copy folders or files from container to host. Ex. `bin/copyfromcontainer vendor`
+- `bin/copytocontainer`: Copy folders or files from host to container. Ex. `bin/copytocontainer --all`
+- `bin/download`: Download & extract specific Magento version to the `src` directory. Ex. `bin/download 2.3.0`
+- `bin/fixowns`: This will fix filesystem ownerships within the container.
+- `bin/fixperms`: This will fix filesystem permissions within the container.
+- `bin/grunt`: Run the grunt binary. Note that this runs the version from the node_modules directory for project version parity. Ex. `bin/grunt exec`
+- `bin/magento`: Run the Magento CLI. Ex: `bin/magento cache:flush`
+- `bin/node`: Run the node binary. Ex. `bin/node --version`
+- `bin/npm`: Run the npm binary. Ex. `bin/npm install`
+- `bin/remove`: Remove all containers.
+- `bin/removevolumes`: Remove all volumes.
+- `bin/restart`: Stop and then start all containers.
+- `bin/root`: Run any CLI command as root without going into the bash prompt. Ex `bin/root apt-get install nano`
+- `bin/rootnotty`: Run any CLI command as root with no TTY. Ex `bin/rootnotty chown -R app:app /var/www/html`
+- `bin/setup`: Run the Magento setup process to install Magento from the source code, with optional domain name. Defaults to `magento2.test`. Ex. `bin/setup magento2.test`
+- `bin/start`: Start all containers, good practice to use this instead of `docker-compose up -d`, as it may contain additional helpers.
+- `bin/stop`: Stop all containers.
+- `bin/xdebug`: Disable or enable Xdebug. Accepts params `disable` (default) or `enable`. Ex. `bin/xdebug enable`
 
-### Host Volumes
+## Misc Info
 
-Previously, we mounted this entire src directory from the host to the volume, but this made things pretty slow. Instead, we are now recommending mounting /src as a standard Docker volume (not connected to the host). Install Magento 2, then issue a command like the following on your host machine:
+### Database
 
-```
-docker cp CONTAINERID:/src ./
-```
+The hostname of each service is the name of the service within the `docker-compose.yml` file. So for example, MySQL's hostname is `db` (not `localhost`) when accessing it from within a Docker container. Elasticsearch's hostname is `elasticsearch`.
 
-This will copy the contents of the entire /src directory to your host machine. Since you shouldn't be modifying any of these files, this is just to bring the fully copy of the site back to your host.
+### Composer Authentication
 
-Then, just mount your host `app/code` directory in your `appdata` container definition, and re-start your containers:
+First setup Magento Marketplace authentication (details in the [DevDocs](http://devdocs.magento.com/guides/v2.0/install-gde/prereq/connect-auth.html)).
 
-```
-appdata:
-  image: tianon/true
-  volumes:
-    - /src
-    - ./src/app/code:/src/app/code
-    - ~/.composer:/root/.composer
-```
+After doing so, copy the auth sample file to:
 
-```
-docker-compose up -d app
-```
+- `cp src/auth.json.sample src/auth.json`
 
-This will restart your container with `app/code` mounted from your host machine, so any edits to this directory will correctly sync with your Docker volume.
+Then update the username and password values with your Magento public and private keys, respectively.
+
+### Xdebug & VS Code
+
+Install and enable the PHP Debug extension from the [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=felixfbecker.php-debug).
+
+Otherwise, this project now automatically sets up Xdebug support with VS Code. If you wish to set this up manually, please see the [`.vscode/launch.json`](https://github.com/markoshust/docker-magento/blame/master/compose/magento-2/.vscode/launch.json) file.
+
+### Xdebug & PHPStorm
+
+1.  First, install the [Chrome Xdebug helper](https://chrome.google.com/webstore/detail/xdebug-helper/eadndfjplgieldjbigjakmdgkmoaaaoc). After installed, right click on the Chrome icon for it and go to Options. Under IDE Key, select PHPStorm from the list and click Save.
+
+2.  Next, enable Xdebug in the PHP-FPM container by running: `bin/xdebug enable`, the restart the docker containers (CTRL+C then `bin/start`).
+
+3.  Then, open `PHPStorm > Preferences > Languages & Frameworks > PHP` and configure:
+
+    * `CLI Interpreter`
+        * Create a new interpreter and specify `From Docker`, and name it `markoshust/magento-php:7-2-fpm`.
+        * Choose `Docker`, then select the `markoshust/magento-php:7-2-fpm` image name, and set the `PHP Executable` to `php`.
+
+    * `Path mappings`
+        * Don't do anything here as the next `Docker container` step will automatically setup a path mapping from `/var/www/html` to `./src`.
+
+    * `Docker container`
+        * Remove any pre-existing volume bindings.
+        * Ensure a volume binding has been setup for Container path of `/var/www/html` mapped to the Host path of `./src`.
+
+4. Open `PHPStorm > Preferences > Languages & Frameworks > PHP > Debug` and set Debug Port to `9001`.
+
+5. Open `PHPStorm > Preferences > Languages & Frameworks > PHP > DBGp Proxy` and set Port to `9001`.
+
+6. Open `PHPStorm > Preferences > Languages & Frameworks > PHP > Servers` and create a new server:
+
+    * Set Name and Host to your domain name (ex. `magento2.test`)
+    * Set Port to `8000`
+    * Check the Path Mappings box and map `src` to the absolute path of `/var/www/html`
+
+7. Go to `Run > Edit Configurations` and create a new `PHP Remote Debug` configuration by clicking the plus sign and selecting it. Set the Name to your domain (ex. `magento2.test`). Check the `Filter debug connection by IDE key` checkbox, select the server you just setup, and under IDE Key enter `PHPSTORM`. This IDE Key should match the IDE Key set by the Chrome Xdebug Helper. Then click OK to finish setting up the remote debugger in PHPStorm.
+
+8. Open up `src/pub/index.php`, and set a breakpoint near the end of the file. Go to `Run > Debug 'magento2.test'`, and open up a web browser. Ensure the Chrome Xdebug helper is enabled by clicking on it > Debug. Navigate to your Magento store URL, and Xdebug within PHPStorm should now trigger the debugger and pause at the toggled breakpoint.
+
+## License
+
+[MIT](https://opensource.org/licenses/MIT)
